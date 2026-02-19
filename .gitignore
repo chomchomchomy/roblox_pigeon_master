@@ -1,0 +1,13 @@
+# Project place file
+/roblox_pigeon_master.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+
+# Binary
+rojo.exe
+*.exe
+
+# User settings
+.vscode/

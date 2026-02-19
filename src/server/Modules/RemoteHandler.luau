@@ -34,8 +34,11 @@ function RemoteHandler.Init()
 
 		local result = HatchModule.HatchEgg(player, eggType)
 
-		-- 結果をクライアントに返す（同じEventで折り返し）
+		-- 結果をクライアントに返す
 		hatchEvent:FireClient(player, result)
+		
+		-- データ更新を通知
+		RemoteHandler.FireUpdateData(player)
 	end)
 
 	-- TrainPigeon RemoteEvent
@@ -45,6 +48,9 @@ function RemoteHandler.Init()
 
 		local result = TrainingModule.StartTraining(player, pigeonId, trainingType)
 		trainEvent:FireClient(player, result)
+		
+		-- データ更新を通知
+		RemoteHandler.FireUpdateData(player)
 	end)
 
 	-- GetPlayerData RemoteFunction
@@ -53,7 +59,6 @@ function RemoteHandler.Init()
 		local profile = DataHandler.GetProfile(player)
 		if not profile then return nil end
 
-		-- クライアントに送るデータのコピー（直接参照を渡さない）
 		return {
 			Coins    = profile.Data.Coins,
 			Gems     = profile.Data.Gems,
@@ -62,7 +67,25 @@ function RemoteHandler.Init()
 		}
 	end
 
+	-- UpdatePlayerData RemoteEvent
+	GetOrCreate("RemoteEvent", RemoteEventNames.UpdatePlayerData)
+
 	print("✅ RemoteHandler Initialized")
+end
+
+function RemoteHandler.FireUpdateData(player)
+	local profile = DataHandler.GetProfile(player)
+	if not profile then return end
+
+	local event = ReplicatedStorage.Remotes:FindFirstChild(RemoteEventNames.UpdatePlayerData)
+	if event then
+		event:FireClient(player, {
+			Coins    = profile.Data.Coins,
+			Gems     = profile.Data.Gems,
+			Pigeons  = profile.Data.Pigeons,
+			Stats    = profile.Data.Stats,
+		})
+	end
 end
 
 return RemoteHandler

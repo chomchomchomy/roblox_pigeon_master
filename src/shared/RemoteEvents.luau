@@ -10,6 +10,9 @@ local RemoteEvents = {
 
 	-- プレイヤーデータ取得（RemoteFunction）
 	GetPlayerData  = "GetPlayerData",
+
+	-- データ更新通知（RemoteEvent）
+	UpdatePlayerData = "UpdatePlayerData",
 }
 
 return RemoteEvents
